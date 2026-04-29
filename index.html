@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset='utf-8'>
+    <title>drama meter</title>
+    <style>
+        body {
+            background-color: #ffe;
+            font-family: Courier, monospace;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #app {
+            border: 3px solid #333;
+            padding: 15px;
+            margin: auto;
+            width: 80%;
+            max-width: 800px;
+            background: #fff;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-weight: bold;
+            background-color: tomato;
+            color: #fff;
+            border: 2px dashed black;
+        }
+
+        .btn:hover {
+            background: red;
+            cursor: pointer;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #historyTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        #historyTable th,
+        #historyTable td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        .drama-high {
+            color: red;
+            font-weight: 900;
+        }
+
+        .drama-low {
+            color: green;
+        }
+
+        .meter-bar-bg {
+            width: 100%;
+            height: 30px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+
+        #meterFill {
+            width: 0%;
+            height: 100%;
+            background: red;
+            transition: 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h1>drama meter pro max</h1>
+        <p>calculate the exact amount of drama in your life right now</p>
+
+        <label>Who is the drama with?</label>
+        <select id="cat">
+            <option value='Friend'>Friend</option>
+            <option value="Partner">Partner</option>
+            <option value='Coworker'>Coworker</option>
+            <option value="Family">Family</option>
+        </select><br>
+
+        <label>Describe the situation:</label><br>
+        <input type='text' id="userInput" style="width:70%" placeholder="they left me on read...">
+        <br><br>
+        <button class='btn' onclick="calcDrama()">Calculate Drama Level</button>
+
+        <div class="meter-bar-bg">
+            <div id="meterFill"></div>
+        </div>
+        <h2 id="res"></h2>
+        <hr>
+        <h3>drama history</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Situation</th>
+                    <th>Drama Score</th>
+                    <th>Advice</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+        </table>
+        <br>
+        <button onclick="clearAll()" style="padding:5px;background:#333;color:white;">Clear History</button>
+    </div>
+
+    <script>
+        // claude helped me write this lol
+        var advices = ["drop them", 'talk it out', "ignore it", 'start screaming', "post subtweets", "apologize immediately"];
+
+        function calcDrama() {
+            var txt = document.getElementById('userInput').value;
+            var cat = document.getElementById("cat").value;
+
+            if (txt == '') return; // dont run if empty
+
+            var score = Math.floor(Math.random() * 100) + 1;
+            var advice = advices[Math.floor(Math.random() * advices.length)];
+
+            // fill the bar
+            var fill = document.getElementById("meterFill");
+            fill.style.width = score + "%";
+
+            var resEl = document.getElementById('res');
+
+            // TODO: make this smoother somehow
+            if (score > 70) {
+                resEl.innerHTML = "<span class='drama-high'>CRITICAL DRAMA (" + score + "%)</span>";
+                fill.style.background = "red";
+            } else if (score > 30) {
+                resEl.innerHTML = "Average Drama (" + score + "%)";
+                fill.style.background = "orange";
+            } else {
+                resEl.innerHTML = "<span class='drama-low'>Low Drama (" + score + "%)</span>";
+                fill.style.background = "green";
+            }
+
+            var tbody = document.getElementById("historyBody");
+            var row = tbody.insertRow();
+            row.insertCell(0).innerText = cat;
+            row.insertCell(1).innerText = txt;
+            row.insertCell(2).innerText = score;
+            row.insertCell(3).innerText = advice;
+
+            // TODO: save to localstorage so it doesnt wipe on refresh
+        }
+
+        function clearAll() {
+            document.getElementById("historyBody").innerHTML = "";
+            document.getElementById('res').innerHTML = "";
+            document.getElementById("meterFill").style.width = "0%";
+            document.getElementById('userInput').value = "";
+        }
+    </script>
+</body>
+
+</html>
